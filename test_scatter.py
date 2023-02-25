@@ -34,8 +34,8 @@ model = models.resnet50()
 model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), bias=False)
 # model.fc = nn.Linear(512, 10) # resnet18
 # model.fc = nn.Linear(2048, 10)  # resnet50
-num_ftrs = model.fc.in_features
-model.fc = af.ArcFace(num_ftrs, num_classes)
+# model.fc = af.ArcFace(model.fc.in_features, num_classes)
+model.fc = af.ArcMarginProduct(model.fc.in_features, num_classes)
 
 model.to(device)
 model.load_state_dict(torch.load(model_fname))
