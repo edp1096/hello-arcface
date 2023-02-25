@@ -7,12 +7,14 @@ from torchvision.transforms import ToTensor
 import modules.dataset as dset
 import modules.network as net
 import modules.arcface as af
+import modules.ccface as cc
 
 import matplotlib.pyplot as plt
 import random
 
 # model_fname = "model_mnist_default.pt"
-model_fname = "model_mnist_arcface.pt"
+# model_fname = "model_mnist_arcface.pt"
+model_fname = "model_mnist_ccface.pt"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
@@ -33,7 +35,8 @@ model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3)
 # model.fc = nn.Linear(512, 10) # resnet18
 # model.fc = nn.Linear(2048, 10)  # resnet50
 # model.fc = af.ArcFace(model.fc.in_features, num_classes)
-model.fc = af.ArcMarginProduct(model.fc.in_features, num_classes)
+# model.fc = af.ArcMarginProduct(model.fc.in_features, num_classes)
+model.fc = cc.CurricularFace(model.fc.in_features, num_classes)
 
 model.to(device)
 model.load_state_dict(torch.load(model_fname))
