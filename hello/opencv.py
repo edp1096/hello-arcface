@@ -3,16 +3,16 @@ import cv2
 im = cv2.imread("Lenna.png")
 bgr = im
 
-clahe = cv2.createCLAHE(clipLimit=0.5, tileGridSize=(8, 8))
+clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8))
 l, a, b = cv2.split(cv2.cvtColor(bgr, cv2.COLOR_BGR2LAB))
 l2 = clahe.apply(l)
 bgr = cv2.cvtColor(cv2.merge((l2, a, b)), cv2.COLOR_LAB2BGR)
 
-ycrcb = cv2.cvtColor(bgr, cv2.COLOR_BGR2YCrCb)
-y, cr, cb = cv2.split(ycrcb)
-yequ = cv2.equalizeHist(y)
-ycrcb = cv2.merge((yequ, cr, cb))
-bgr = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
+# ycrcb = cv2.cvtColor(bgr, cv2.COLOR_BGR2YCrCb)
+# y, cr, cb = cv2.split(ycrcb)
+# yequ = cv2.equalizeHist(y)
+# ycrcb = cv2.merge((yequ, cr, cb))
+# bgr = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
 
 # hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
 # h, s, v = cv2.split(hsv)
