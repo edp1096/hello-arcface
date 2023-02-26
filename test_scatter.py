@@ -29,7 +29,7 @@ tsne = TSNE(random_state=0)
 num_classes = 10
 
 test_transform = transforms.Compose([transforms.ToTensor()])
-test_data = dset.prepareCustomDataset(9, "datas/test", test_transform)
+test_data = dset.prepareCustomDataset(9, "data_mnist/test", test_transform)
 
 # resnet
 # model = models.resnet50()

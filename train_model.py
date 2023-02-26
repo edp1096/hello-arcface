@@ -42,8 +42,8 @@ valid_transform = train_transform
 if use_torchvision_dataset:
     train_set, valid_set = dset.prepareTorchvisionDataset(train_transform, valid_transform)  # Torchvision Dataset
 else:
-    train_set = dset.prepareCustomDataset(9, "datas/train", train_transform)  # Custom Dataset
-    valid_set = dset.prepareCustomDataset(9, "datas/test", valid_transform)
+    train_set = dset.prepareCustomDataset(9, "data_mnist/train", train_transform)  # Custom Dataset
+    valid_set = dset.prepareCustomDataset(9, "data_mnist/valid", valid_transform)
 
 train_loader, valid_loader = dset.getDataLoaders(train_set, valid_set, batch_size, batch_size)
 
