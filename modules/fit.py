@@ -1,20 +1,30 @@
-def runCNN(device, loader, model, loss_fn, optimizer):
+import torch
+
+
+def run(device, loader, model, loss_fn, optimizer):
     model.train()
 
-    size = len(loader.dataset)
+    dataset_size = len(loader.dataset)
+    train_acc_ratio, train_loss, corrects = 0.0, 0.0, 0
 
     for batch, (image, label) in enumerate(loader):
         image, label = image.to(device), label.to(device)
 
-        # 예측 오류 계산
-        pred = model(image.float())
-        loss = loss_fn(pred, label)
-
-        # 역전파
         optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        with torch.set_grad_enabled(True):
+            # 예측 오류 계산
+            pred = model(image.float())
+            loss = loss_fn(pred, label)
 
-        if batch % 100 == 0:
-            loss, current = loss.item(), batch * len(image)
-            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+            # 역전파
+            loss.backward()
+            optimizer.step()
+
+        # 정확도 계산
+        train_loss += loss.item() * image.size(0)
+        corrects += torch.sum(pred.argmax(1) == label.data)
+
+    train_acc_ratio = corrects / dataset_size
+    train_loss_ratio = train_loss / dataset_size
+
+    return train_acc_ratio, train_loss_ratio

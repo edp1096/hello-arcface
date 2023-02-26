@@ -1,23 +1,18 @@
+from config import *
+
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, ConcatDataset
-from torchinfo import summary
+from torch.utils.data import DataLoader
 from torchvision import datasets, models, transforms
-from torchvision.transforms import ToTensor
 
-import modules.dataset as dset
 import modules.fit as fit
 import modules.valid as valid
 import modules.arcface as af
 import modules.ccface as cc
 
+from torchinfo import summary
 import random
 
-
-use_torchvision_dataset = False
-# model_fname = "model_mnist_default.pt"
-model_fname = "model_mnist_arcface.pt"
-# model_fname = "model_mnist_ccface.pt"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
@@ -27,57 +22,53 @@ torch.manual_seed(777)
 if device == "cuda":
     torch.cuda.manual_seed_all(777)
 
-# epochs = 5
-# batch_size = 100
-# learning_rate = 0.01
-epochs = 17
-batch_size = 512
-learning_rate = 0.05
+# data_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+data_transform = transforms.ToTensor()
+train_set = datasets.ImageFolder(f"{DATA_ROOT}/train", transform=data_transform)
+valid_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=data_transform)
+train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True)
+valid_loader = DataLoader(valid_set, batch_size=BATCH_SIZE, shuffle=True)
 
-num_classes = 10
+num_classes = len(train_set.classes)
 
-train_transform = transforms.Compose([transforms.ToTensor()])
-valid_transform = train_transform
-
-if use_torchvision_dataset:
-    train_set, valid_set = dset.prepareTorchvisionDataset(train_transform, valid_transform)  # Torchvision Dataset
-else:
-    train_set = dset.prepareCustomDataset(9, "data_mnist/train", train_transform)  # Custom Dataset
-    valid_set = dset.prepareCustomDataset(9, "data_mnist/valid", valid_transform)
-
-train_loader, valid_loader = dset.getDataLoaders(train_set, valid_set, batch_size, batch_size)
-
-# resnet
-# model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
 model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
-model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), bias=False)
-# model.fc = nn.Linear(model.fc.in_features, num_classes)  # resnet
-model.fc = af.ArcFace(model.fc.in_features, num_classes)
-# model.fc = af.ArcMarginProduct(model.fc.in_features, num_classes)
-# model.fc = cc.CurricularFace(model.fc.in_features, num_classes)
+match FC_LAYER:
+    case "default":
+        model.fc = nn.Linear(model.fc.in_features, num_classes)
+    case "arcface":
+        model.fc = af.ArcFace(model.fc.in_features, num_classes)
+        # model.fc = af.ArcMarginProduct(model.fc.in_features, num_classes)
+    case "ccface":
+        model.fc = cc.CurricularFace(model.fc.in_features, num_classes)
 
 model.to(device)
-print(model)
 
-summary(model, input_size=(512, 1, 28, 28))  # cnn
+# print(model)
+summary(model, input_size=(CHANNEL_OUT, CHANNEL_IN, KERNEL_SIZE, KERNEL_SIZE))
 
 total_batch = len(train_loader)
 print("Batch count : {}".format(total_batch))
 
-criterion = nn.CrossEntropyLoss().to(device)  # 비용 함수에 소프트맥스 함수 포함되어져 있음
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
-# optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+criterion = nn.CrossEntropyLoss().to(device)
+optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
+# optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
 
-# 훈련 시작
-for epoch in range(epochs):
-    print(f"Epoch {epoch+1}\n-------------------------------")
+# 학습 시작
+train_acc, valid_acc, best_acc = 0, 0, 0
+for epoch in range(EPOCHS):
+    print(f"Epoch {epoch+1}    [{len(train_set)}]\n-------------------------------")
 
-    # cnn
-    fit.runCNN(device, train_loader, model, criterion, optimizer)
-    valid.runCNN(device, valid_loader, model, criterion)
+    train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
+    valid_acc, valid_loss = valid.run(device, valid_loader, model, criterion)
+
+    print(f"Train - Acc: {(100*train_acc):>3.2f}%, Loss: {train_loss:>10f}")
+    print(f"Valid - Acc: {(100*valid_acc):>3.2f}%, Loss: {valid_loss:>10f}\n")
+
+    # 모델 저장
+    if valid_acc > best_acc:
+        torch.save(model.state_dict(), f"{WEIGHT_FILENAME}")
+        print(f"Saved best state to {WEIGHT_FILENAME}\nValid acc: {best_acc:>2.5f} -> {valid_acc:>2.5f}\n")
+        best_acc = valid_acc
 
 print("Training done!")
-
-torch.save(model.state_dict(), model_fname)
-print(f"Saved PyTorch Model State to {model_fname}")
