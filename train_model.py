@@ -7,7 +7,6 @@ from torchvision.transforms import ToTensor
 
 import modules.dataset as dset
 import modules.fit as fit
-import modules.network as net
 import modules.valid as valid
 import modules.arcface as af
 import modules.ccface as cc
@@ -17,8 +16,8 @@ import random
 
 use_torchvision_dataset = False
 # model_fname = "model_mnist_default.pt"
-# model_fname = "model_mnist_arcface.pt"
-model_fname = "model_mnist_ccface.pt"
+model_fname = "model_mnist_arcface.pt"
+# model_fname = "model_mnist_ccface.pt"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
@@ -30,9 +29,10 @@ if device == "cuda":
 
 # epochs = 5
 # batch_size = 100
+# learning_rate = 0.01
 epochs = 17
 batch_size = 512
-learning_rate = 0.01
+learning_rate = 0.05
 
 num_classes = 10
 
@@ -48,25 +48,25 @@ else:
 train_loader, valid_loader = dset.getDataLoaders(train_set, valid_set, batch_size, batch_size)
 
 # resnet
-model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
+# model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
+model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
 model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), bias=False)
-# model.fc = nn.Linear(512, 10)  # resnet18
-# model.fc = nn.Linear(2048, 10)  # resnet50
-# model.fc = af.ArcFace(model.fc.in_features, num_classes)
+# model.fc = nn.Linear(model.fc.in_features, num_classes)  # resnet
+model.fc = af.ArcFace(model.fc.in_features, num_classes)
 # model.fc = af.ArcMarginProduct(model.fc.in_features, num_classes)
-model.fc = cc.CurricularFace(model.fc.in_features, num_classes)
+# model.fc = cc.CurricularFace(model.fc.in_features, num_classes)
 
 model.to(device)
 print(model)
 
-summary(model, input_size=(batch_size, 1, 28, 28))  # cnn
+summary(model, input_size=(512, 1, 28, 28))  # cnn
 
 total_batch = len(train_loader)
 print("Batch count : {}".format(total_batch))
 
 criterion = nn.CrossEntropyLoss().to(device)  # 비용 함수에 소프트맥스 함수 포함되어져 있음
-# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+# optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 
 # 훈련 시작

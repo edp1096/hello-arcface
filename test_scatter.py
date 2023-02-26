@@ -6,7 +6,6 @@ from torchvision.transforms import ToTensor
 from sklearn.manifold import TSNE
 
 import modules.dataset as dset
-import modules.network as net
 import modules.arcface as af
 import modules.ccface as cc
 
@@ -14,8 +13,8 @@ import modules.plot as plotter
 
 
 # model_fname = "model_mnist_default.pt"
-# model_fname = "model_mnist_arcface.pt"
-model_fname = "model_mnist_ccface.pt"
+model_fname = "model_mnist_arcface.pt"
+# model_fname = "model_mnist_ccface.pt"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
@@ -33,13 +32,13 @@ test_transform = transforms.Compose([transforms.ToTensor()])
 test_data = dset.prepareCustomDataset(9, "datas/test", test_transform)
 
 # resnet
-model = models.resnet50()
+# model = models.resnet50()
+model = models.resnet18()
 model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), bias=False)
-# model.fc = nn.Linear(512, 10) # resnet18
-# model.fc = nn.Linear(2048, 10)  # resnet50
-# model.fc = af.ArcFace(model.fc.in_features, num_classes)
+# model.fc = nn.Linear(model.fc.in_features, 10)  # resnet
+model.fc = af.ArcFace(model.fc.in_features, num_classes)
 # model.fc = af.ArcMarginProduct(model.fc.in_features, num_classes)
-model.fc = cc.CurricularFace(model.fc.in_features, num_classes)
+# model.fc = cc.CurricularFace(model.fc.in_features, num_classes)
 
 model.to(device)
 model.load_state_dict(torch.load(model_fname))
@@ -74,8 +73,8 @@ with torch.no_grad():
     test_tsne_embeds = tsne.fit_transform(test_outputs.cpu().detach().numpy())
 
 # fname = "distribution_linear_test"
-# fname = "distribution_arcface_test"
-fname = "distribution_ccface_test"
+fname = "distribution_arcface_test"
+# fname = "distribution_ccface_test"
 plotter.scatter(test_tsne_embeds, batch_label.cpu().numpy(), subtitle=fname)
 
 print("Done")

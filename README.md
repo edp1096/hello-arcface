@@ -7,3 +7,5 @@
 * https://www.kaggle.com/code/parthdhameliya77/simple-arcface-implementation-on-mnist-dataset/notebook
 * https://github.com/egcode/pytorch-losses/blob/master/mnist-visualize-arcface-loss.ipynb
 * https://medium.com/analytics-vidhya/face-recognition-and-arcface-additive-angular-margin-loss-for-deep-face-recognition-44abc56916c
+* https://github.com/cvqluu/Angular-Penalty-Softmax-Losses-Pytorch
+* https://www.kaggle.com/code/peter0749/additive-margin-softmax-loss-with-visualization
