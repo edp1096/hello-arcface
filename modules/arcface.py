@@ -17,6 +17,8 @@ class ArcFace(nn.Module):
         self.fc = nn.Linear(cin, cout, bias=False)
 
     def forward(self, x, label=None):
+        x = F.dropout(x, p=0.5, training=self.training)  # Add dropout
+
         w_L2 = linalg.norm(self.fc.weight.detach(), dim=1, keepdim=True).T
         x_L2 = linalg.norm(x, dim=1, keepdim=True)
         cos = self.fc(x) / (x_L2 * w_L2)
