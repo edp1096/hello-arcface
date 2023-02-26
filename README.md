@@ -25,3 +25,6 @@
     * https://github.com/mntalha/Histogram_Equalization
     * https://github.com/Umity/python-clahe
     * https://gist.github.com/sadimanna/52c320ce5c49e200ce398f800d39a2c1
+
+* Dataloading
+    * https://tutorials.pytorch.kr/beginner/data_loading_tutorial.html
