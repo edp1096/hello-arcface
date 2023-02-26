@@ -1,9 +1,6 @@
 import cv2
-import numpy as np
 
 im = cv2.imread("Lenna.png")
-# cv2.imshow("Lenna", im)
-
 bgr = im
 
 clahe = cv2.createCLAHE(clipLimit=0.5, tileGridSize=(8, 8))
@@ -25,11 +22,12 @@ bgr = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
 
 # cv2.normalize(bgr, bgr, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
 
-
-# cv2.imshow("Clahe", bgr)
+# rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
 
 hIM = cv2.hconcat([im, bgr])
 
+# cv2.imshow("Lenna", im)
+# cv2.imshow("Clahe", bgr)
 cv2.imshow("Lenna - Original / CLAHE", hIM)
 
 cv2.waitKey(0)
