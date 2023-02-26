@@ -12,7 +12,5 @@ im_t = xfrm(im)
 
 print(im_t.shape)
 
-im_p = im_t.permute(1, 2, 0)
-
-plt.imshow(im_p)
+plt.imshow(im_t.permute(1, 2, 0))
 plt.show()
