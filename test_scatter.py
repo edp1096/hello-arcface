@@ -24,7 +24,6 @@ test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=True)
 num_classes = len(test_set.classes)
 
 model = models.resnet18()
-# model.conv1 = nn.Conv2d(CHANNEL_IN, CHANNEL_OUT, kernel_size=(KERNEL_SIZE, KERNEL_SIZE), bias=False)
 match FC_LAYER:
     case "default":
         model.fc = nn.Linear(model.fc.in_features, num_classes)
