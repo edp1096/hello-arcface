@@ -65,7 +65,7 @@ total_batch = len(train_loader)
 print("Batch count : {}".format(total_batch))
 
 criterion = nn.CrossEntropyLoss().to(device)  # 비용 함수에 소프트맥스 함수 포함되어져 있음
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
 # optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 
