@@ -6,18 +6,20 @@ DATASET_NAME = "cifar10"
 DATA_ROOT = "data/cifar10"
 IMAGE_SIZE = 32
 
-""" 
-model: ResNet18 only
+"""
+model: ResNet18, ResNet34
 fc layer: default, arcface, ccface
 'default' means nn.Linear
+'arcface' means modules.arcface.ArcFace
 'ccface' means modules.ccface.CurricularFace
 """
-MODEL_NAME = "resnet18"
+MODEL_NAME = "resnet34"
 FC_LAYER = "arcface"
 WEIGHT_FILENAME = f"{MODEL_NAME}_{DATASET_NAME}_{FC_LAYER}.pt"
 SCATTER_FILENAME = f"dist_{DATASET_NAME}_{FC_LAYER}"
+LOSS_FILENAME = f"loss_{DATASET_NAME}_{FC_LAYER}"
 
-EPOCHS = 100
+EPOCHS = 50
 BATCH_SIZE = 256
 LEARNING_RATE = 0.05
 

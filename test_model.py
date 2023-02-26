@@ -22,7 +22,12 @@ test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=True)
 
 num_classes = len(test_set.classes)
 
-model = models.resnet18()
+match MODEL_NAME:
+    case "resnet18":
+        model = models.resnet18()
+    case "resnet34":
+        model = models.resnet34()
+
 match FC_LAYER:
     case "default":
         model.fc = nn.Linear(model.fc.in_features, num_classes)

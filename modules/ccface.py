@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
+from torch.nn import functional as F
 
 import math
 
@@ -28,13 +29,15 @@ class CurricularFace(nn.Module):
         nn.init.normal_(self.kernel, std=0.01)
 
     def forward(self, embbedings, label=None):
+        embbedings = F.dropout(embbedings, p=0.4, training=self.training)  # Add dropout
+
         embbedings = l2_norm(embbedings, axis=1)
         kernel_norm = l2_norm(self.kernel, axis=0)
         cos_theta = torch.mm(embbedings, kernel_norm)
         cos_theta = cos_theta.clamp(-1, 1)  # for numerical stability
         with torch.no_grad():
             origin_cos = cos_theta.clone()
-        
+
         output = cos_theta
 
         if label is not None:
