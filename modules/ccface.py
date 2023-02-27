@@ -29,7 +29,7 @@ class CurricularFace(nn.Module):
         nn.init.normal_(self.kernel, std=0.01)
 
     def forward(self, embbedings, label=None):
-        embbedings = F.dropout(embbedings, p=0.4, training=self.training)  # Add dropout
+        # embbedings = F.dropout(embbedings, p=0.4, training=self.training)  # Add dropout
 
         embbedings = l2_norm(embbedings, axis=1)
         kernel_norm = l2_norm(self.kernel, axis=0)

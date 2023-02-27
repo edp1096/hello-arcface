@@ -25,18 +25,18 @@ num_classes = len(test_set.classes)
 
 match MODEL_NAME:
     case "resnet18":
-        model = models.resnet18()
-    case "resnet34":
-        model = models.resnet34()
+        model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
 
 match FC_LAYER:
     case "default":
-        model.fc = nn.Linear(model.fc.in_features, num_classes)
+        model.classifier[1] = nn.Sequential(nn.Dropout(p=0.3, inplace=True), nn.Linear(model.classifier[1].in_features, num_classes))
+
     case "arcface":
-        model.fc = af.ArcFace(model.fc.in_features, num_classes)
-        # model.fc = af.ArcMarginProduct(model.fc.in_features, num_classes)
+        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes, s=64.0, m=0.5))
+        # model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes))
+
     case "ccface":
-        model.fc = cc.CurricularFace(model.fc.in_features, num_classes)
+        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), cc.CurricularFace(model.fc.in_features, num_classes))
 
 model.to(device)
 model.load_state_dict(torch.load(WEIGHT_FILENAME))
