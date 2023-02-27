@@ -11,6 +11,7 @@ import modules.arcface as af
 import modules.ccface as cc
 
 import cv2
+import numpy as np
 import matplotlib.pyplot as plt
 from torchinfo import summary
 

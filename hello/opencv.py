@@ -1,6 +1,13 @@
 import cv2
+import numpy as np
+from PIL import Image
 
-im = cv2.imread("Lenna.png")
+
+pil_im = Image.open("Lenna.png")
+np_im = np.array(pil_im)
+
+# im = cv2.imread("Lenna.png")
+im = cv2.cvtColor(np_im, cv2.COLOR_RGB2BGR)
 bgr = im
 
 clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8))
