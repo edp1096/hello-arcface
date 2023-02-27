@@ -4,22 +4,20 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, models, transforms
-from lion_pytorch import Lion
 
 import modules.fit as fit
 import modules.valid as valid
 import modules.arcface as af
 import modules.ccface as cc
 
+import cv2
 import matplotlib.pyplot as plt
-import random
 from torchinfo import summary
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
 
-random.seed(777)
 torch.manual_seed(777)
 if device == "cuda":
     torch.cuda.manual_seed_all(777)
@@ -32,6 +30,21 @@ train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True)
 valid_loader = DataLoader(valid_set, batch_size=BATCH_SIZE, shuffle=True)
 
 num_classes = len(train_set.classes)
+
+
+# # Show one image in dataset
+# random_idx = torch.randint(0, len(train_set), (1,)).item()
+# tdata = train_set[random_idx][0]
+# tlabel = train_set[random_idx][1]
+# print(f"{random_idx}/{len(train_set)}", tdata.shape)
+
+# ndata = tdata.permute(1, 2, 0).numpy()
+# nlabel = train_set.classes[tlabel]
+
+# resize_ndata = cv2.resize(ndata, (512, 512), interpolation=cv2.INTER_AREA)
+# cv2.imshow(nlabel, resize_ndata)
+# cv2.waitKey(0)
+
 
 match MODEL_NAME:
     case "resnet50":
@@ -101,7 +114,7 @@ ax[0].set_title("Accuracy")
 ax[0].plot(train_accs, label="train")
 ax[0].plot(valid_accs_top1, label="valid top1")
 ax[0].plot(valid_accs_top3, label="valid top3")
-ax[0].plot([best_epoch+1], [best_acc.cpu() * 100], marker="o", markersize=5, color="red", label="best")
+ax[0].plot([best_epoch + 1], [best_acc.cpu() * 100], marker="o", markersize=5, color="red", label="best")
 ax[0].set_ylim(0, 100)
 ax[0].legend()
 

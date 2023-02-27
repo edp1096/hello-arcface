@@ -36,7 +36,7 @@ def showSampleImage(fpath):
 
     image = np.fromfile(f, dtype=np.uint8, count=IMG_SIZE)
 
-    image = np.reshape(image, (C, W, H))
+    image = np.reshape(image, (C, H, W))
     image = np.transpose(image, (2, 1, 0))
 
     plt.title("Image #" + str(num + 1))
