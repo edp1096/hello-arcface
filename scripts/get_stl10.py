@@ -72,13 +72,13 @@ def saveIMGs(images, labels, types):
         i += 1
 
 
-def saveUnlabeledIMGs(images, limit=200):
+def saveUnlabeledIMGs(images, limit=0):
     dir = DATA_ROOT + "/" + "test" + "/"
 
     if len(images) < limit:
         limit = len(images)
 
-    if len(images) > limit:
+    if limit > 0 and len(images) > limit:
         images = images[:limit]
 
     i = 0
