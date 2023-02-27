@@ -78,6 +78,7 @@ for epoch in range(EPOCHS):
     train_accs.append(train_acc.cpu() * 100)
     valid_accs_top1.append(valid_acc_top1.cpu() * 100)
     valid_accs_top3.append(valid_acc_top3 * 100)
+
     train_losses.append(train_loss)
     valid_losses.append(valid_loss)
 

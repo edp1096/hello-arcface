@@ -123,10 +123,9 @@ def main():
 
     train_labels = readLABELs(BIN_PATHS["train_labels"])
     train_images = readIMGs(BIN_PATHS["train_data"])
-    
+
     test_labels = readLABELs(BIN_PATHS["test_labels"])
     test_images = readIMGs(BIN_PATHS["test_data"])
-
     split = int(len(test_labels) / 2)
 
     valid_labels = test_labels[:split]
@@ -136,6 +135,7 @@ def main():
 
     saveIMGs(train_images, train_labels, "train")
     saveIMGs(valid_images, valid_labels, "valid")
+    saveIMGs(test_images, test_labels, "test")
 
     # unlabeled_images = readIMGs(BIN_PATHS["test_data"])
     # limit = int(len(train_images) / 6 * 2)
