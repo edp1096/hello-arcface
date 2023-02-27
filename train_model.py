@@ -49,6 +49,7 @@ match FC_LAYER:
         model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), cc.CurricularFace(model.fc.in_features, num_classes))
 
 model.to(device)
+# model.load_state_dict(torch.load(WEIGHT_BASE_FILENAME))
 
 # print(model)
 summary(model, input_size=(CHANNEL_OUT, CHANNEL_IN, KERNEL_SIZE, KERNEL_SIZE))

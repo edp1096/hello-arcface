@@ -25,7 +25,7 @@ num_classes = len(test_set.classes)
 
 match MODEL_NAME:
     case "resnet18":
-        model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+        model = models.resnet18()
 
 match FC_LAYER:
     case "default":

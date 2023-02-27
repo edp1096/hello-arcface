@@ -15,6 +15,7 @@ fc layer: default, arcface, ccface
 """
 MODEL_NAME = "resnet18"
 FC_LAYER = "arcface"
+WEIGHT_BASE_FILENAME = f"{MODEL_NAME}_{DATASET_NAME}_{FC_LAYER}_base.pt"
 WEIGHT_FILENAME = f"{MODEL_NAME}_{DATASET_NAME}_{FC_LAYER}.pt"
 SCATTER_FILENAME = f"dist_{DATASET_NAME}_{FC_LAYER}"
 LOSS_FILENAME = f"loss_{DATASET_NAME}_{FC_LAYER}"
