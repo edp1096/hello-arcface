@@ -23,7 +23,7 @@ def scatter(x, labels, root=".", subtitle=None, dataset="MNIST"):
     ## Add label on top of each cluster ##
     if dataset == "MNIST":
         idx2name = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    elif dataset == "CIFAR10":
+    elif dataset == "CIFAR10" or dataset == "STL10":
         idx2name = ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
     else:
         raise Exception("Please specify the dataset")

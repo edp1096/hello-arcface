@@ -24,16 +24,15 @@ test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=True)
 num_classes = len(test_set.classes)
 
 match MODEL_NAME:
-    case "resnet18":
-        model = models.resnet18()
+    case "resnet50":
+        model = models.resnet50()
 
 match FC_LAYER:
     case "default":
-        model.classifier[1] = nn.Sequential(nn.Dropout(p=0.3, inplace=True), nn.Linear(model.classifier[1].in_features, num_classes))
+        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), nn.Linear(model.fc.in_features, num_classes))
 
     case "arcface":
-        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes, s=64.0, m=0.5))
-        # model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes))
+        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes))
 
     case "ccface":
         model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), cc.CurricularFace(model.fc.in_features, num_classes))

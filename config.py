@@ -11,13 +11,13 @@ DATA_ROOT = "data/stl10"
 IMAGE_SIZE = 96
 
 """
-model: resnet18 only
+model: resnet50 only
 fc layer: default, arcface, ccface
 'default' means nn.Linear
 'arcface' means modules.arcface.ArcFace
 'ccface' means modules.ccface.CurricularFace
 """
-MODEL_NAME = "resnet18"
+MODEL_NAME = "resnet50"
 FC_LAYER = "arcface"
 WEIGHT_BASE_FILENAME = f"{MODEL_NAME}_{DATASET_NAME}_{FC_LAYER}_base.pt"
 WEIGHT_FILENAME = f"{MODEL_NAME}_{DATASET_NAME}_{FC_LAYER}.pt"
@@ -26,7 +26,7 @@ LOSS_FILENAME = f"loss_{DATASET_NAME}_{FC_LAYER}"
 
 EPOCHS = 50
 BATCH_SIZE = 256
-LEARNING_RATE = 0.05
+LEARNING_RATE = 0.03
 
 CHANNEL_IN = 3  # INPUT CHANNEL
 CHANNEL_OUT = 64  # OUTPUT CHANNEL

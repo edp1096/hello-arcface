@@ -34,16 +34,15 @@ valid_loader = DataLoader(valid_set, batch_size=BATCH_SIZE, shuffle=True)
 num_classes = len(train_set.classes)
 
 match MODEL_NAME:
-    case "resnet18":
-        model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+    case "resnet50":
+        model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
 
 match FC_LAYER:
     case "default":
-        model.classifier[1] = nn.Sequential(nn.Dropout(p=0.3, inplace=True), nn.Linear(model.classifier[1].in_features, num_classes))
+        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), nn.Linear(model.fc.in_features, num_classes))
 
     case "arcface":
-        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes, s=64.0, m=0.5))
-        # model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes))
+        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes))
 
     case "ccface":
         model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), cc.CurricularFace(model.fc.in_features, num_classes))
@@ -66,14 +65,16 @@ optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
 # 학습 시작
 train_accs, valid_accs_top1, valid_accs_top3, train_losses, valid_losses = [], [], [], [], []
 train_acc, valid_acc_top1, valid_acc_top3, best_acc = 0, 0, 0, 0
+best_epoch = 0
 for epoch in range(EPOCHS):
     print(f"Epoch {epoch+1}    [{len(train_set)}]\n-------------------------------")
 
     train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
     valid_acc_top1, valid_acc_top3, valid_loss = valid.run(device, valid_loader, model, criterion)
 
-    print(f"Train - Acc: {(100*train_acc):>3.2f}%, Loss: {train_loss:>10f}")
-    print(f"Valid - Acc top1: {(100*valid_acc_top1):>3.2f}%, top3: {(100*valid_acc_top3):>3.2f}%, Loss: {valid_loss:>10f}")
+    pad = " "
+    print(f"Train - Acc:      {(100*train_acc):>3.2f}%, {pad:<12} Loss: {train_loss:>10f}")
+    print(f"Valid - Acc: top1 {(100*valid_acc_top1):>3.2f}%, top3 {(100*valid_acc_top3):>3.2f}%, Loss: {valid_loss:>10f}")
 
     train_accs.append(train_acc.cpu() * 100)
     valid_accs_top1.append(valid_acc_top1.cpu() * 100)
@@ -86,25 +87,30 @@ for epoch in range(EPOCHS):
     if valid_acc_top1 > best_acc:
         torch.save(model.state_dict(), f"{WEIGHT_FILENAME}")
         print(f"Saved best state to {WEIGHT_FILENAME}\nValid acc: {best_acc:>2.5f} -> {valid_acc_top1:>2.5f}\n")
+        best_epoch = epoch
         best_acc = valid_acc_top1
+
+print(f"Best epoch: {best_epoch+1}, Best acc: {best_acc.cpu() * 100:>2.5f}%")
 
 
 # 학습 결과 그래프
-plt.figure(figsize=(12, 4))
+fig, ax = plt.subplots(1, 2, figsize=(12, 6))
+fig.suptitle(f"{DATASET_NAME} - {MODEL_NAME}/{FC_LAYER}")
 
-plt.title("Accuracy")
-plt.subplot(1, 2, 1)
-plt.plot(train_accs, label="train")
-plt.plot(valid_accs_top1, label="valid top1")
+ax[0].set_title("Accuracy")
+ax[0].plot(train_accs, label="train")
+ax[0].plot(valid_accs_top1, label="valid top1")
+ax[0].plot(valid_accs_top3, label="valid top3")
+ax[0].plot([best_epoch+1], [best_acc.cpu() * 100], marker="o", markersize=5, color="red", label="best")
+ax[0].set_ylim(0, 100)
+ax[0].legend()
 
-plt.title("Loss")
-plt.subplot(1, 2, 2)
-plt.plot(train_losses, label="train")
-plt.plot(valid_losses, label="valid")
+ax[1].set_title("Loss")
+ax[1].plot(train_losses, label="train")
+ax[1].plot(valid_losses, label="valid")
+ax[1].legend()
 
-plt.legend()
-plt.savefig(f"{MODEL_NAME}_{LOSS_FILENAME}.png")
+plt.savefig(f"{MODEL_NAME}_{FC_LAYER}_{LOSS_FILENAME}.png")
 plt.show()
-
 
 print("Training done!")
