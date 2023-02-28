@@ -113,6 +113,7 @@ def download(uri, path):
     for member in tqdm(tar.getmembers(), total=len(tar.getmembers())):
         if member.isreg():
             tar.extract(member, path=path)
+
     tar.close()
 
 

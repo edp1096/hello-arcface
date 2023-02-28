@@ -16,8 +16,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
 
 # test_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+# test_transform = transforms.Compose([transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)), transforms.ToTensor()])
 test_transform = transforms.ToTensor()
-test_set = datasets.ImageFolder(f"{DATA_ROOT}/test", transform=test_transform)
+test_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=test_transform)
 test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=True)
 
 num_classes = len(test_set.classes)

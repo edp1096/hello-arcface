@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patheffects as PathEffects
 import os
 
+
 # Define our own plot function
 def scatter(x, labels, root=".", subtitle=None, dataset="MNIST"):
 
@@ -26,6 +27,14 @@ def scatter(x, labels, root=".", subtitle=None, dataset="MNIST"):
     elif dataset == "CIFAR10" or dataset == "STL10":
         idx2name = ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
     else:
+        # idx2name = []
+        # for file in os.listdir(os.path.join("data/dst", "train")):
+        #     if os.path.isdir(os.path.join("data/dst", "train", file)):
+        #         idx2name.append(file)
+
+        # if len(idx2name) == 0:
+        #     raise Exception("Please specify the dataset")
+
         raise Exception("Please specify the dataset")
 
     txts = []
