@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(1, 2, figsize=(12, 6))
 
+fig.tight_layout()
 fig.suptitle("Sharing X axis")
 
 ax[0].set_title("#1")
