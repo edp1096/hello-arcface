@@ -46,6 +46,7 @@ IMG_FILENAME = "sample_monkey1.png"
 
 img = cv2.imread(IMG_FILENAME)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+# img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
 image = xfrm(img)
 
 with torch.no_grad():
