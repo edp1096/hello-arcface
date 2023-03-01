@@ -1,4 +1,14 @@
+# ArcFace 찍먹
+
+
+## 찍먹들
+
+* ArcFace - https://github.com/edp1096/hello-arcface
+* Faster R-CNN - https://github.com/edp1096/hello-faster-rcnn
+
+
 ## 참고
+
 * https://github.com/shyhyawJou/ArcFace-Pytorch
 * https://github.com/ronghuaiyang/arcface-pytorch
 * https://github.com/HuangYG123/CurricularFace
