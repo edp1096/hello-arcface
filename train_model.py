@@ -24,6 +24,7 @@ if device == "cuda":
     torch.cuda.manual_seed_all(777)
 
 # data_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+# data_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4452, 0.4457, 0.4464), (0.2592, 0.2596, 0.2600))])
 # data_transform = transforms.Compose([transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)), transforms.ToTensor()])
 data_transform = transforms.ToTensor()
 train_set = datasets.ImageFolder(f"{DATA_ROOT}/train", transform=data_transform)
