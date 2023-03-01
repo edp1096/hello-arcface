@@ -44,7 +44,8 @@ model.eval()
 r = random.randint(0, len(test_set) - 1)  # 랜덤 숫자
 image, label_idx = test_set[r]  # image, label_idx = test_data[r][0], test_data[r][1]
 
-pred = model(image.float().unsqueeze(dim=0).to(device))
+with torch.no_grad():
+    pred = model(image.float().unsqueeze(dim=0).to(device))
 
 
 # 라벨
