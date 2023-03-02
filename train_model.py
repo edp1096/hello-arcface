@@ -147,7 +147,7 @@ ax[1].plot(train_losses, label="train")
 ax[1].plot(valid_losses, label="valid")
 ax[1].legend()
 
-plt.savefig(f"{MODEL_NAME}_{FC_LAYER}_{LOSS_FILENAME}.png")
+plt.savefig(f"{MODEL_NAME}_{LOSS_FILENAME}.png")
 plt.show()
 
 print("Training done!")

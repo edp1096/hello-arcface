@@ -50,7 +50,7 @@ model.eval()
 
 
 # 분포도
-fname = f"{MODEL_NAME}_{SCATTER_FILENAME}_test"
+fname = f"{MODEL_NAME}_{SCATTER_FILENAME}"
 
 total_preds = torch.FloatTensor().to(device)
 total_labels = torch.LongTensor().to(device)

@@ -3,4 +3,6 @@ __pycache__
 /data/my
 /data/src
 /data/dst
-/base*
+/base.*
+/base_loss.*
+/base_dist.*
