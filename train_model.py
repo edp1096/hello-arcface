@@ -115,6 +115,15 @@ for epoch in range(EPOCHS):
 
         print(f"Valid acc: {best_acc:>2.5f} -> {valid_acc_top1:>2.5f}\n")
 
+        # Write to text file
+        with open(f"{WEIGHT_FILENAME}.txt", "w") as f:
+            f.write(f"Epoch: {epoch+1}\n")
+            f.write(f"Train acc: {train_acc * 100:>2.5f}%\n")
+            f.write(f"Valid acc top1: {valid_acc_top1 * 100:>2.5f}%\n")
+            f.write(f"Valid acc top3: {valid_acc_top3 * 100:>2.5f}%\n")
+            f.write(f"Train loss: {train_loss:>2.5f}\n")
+            f.write(f"Valid loss: {valid_loss:>2.5f}\n")
+
         best_epoch = epoch
         best_acc = valid_acc_top1
 

@@ -1,0 +1,6 @@
+Epoch: 3
+Train acc: 96.00000%
+Valid acc top1: 91.82500%
+Valid acc top3: 98.92500%
+Train loss: 1.74230
+Valid loss: 1.60089
