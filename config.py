@@ -2,13 +2,13 @@
 # DATA_ROOT = "data/mnist"
 # IMAGE_SIZE = 28
 
-DATASET_NAME = "stl10"
-DATA_ROOT = "data/stl10"
-IMAGE_SIZE = 96
-
-# DATASET_NAME = "dst"
-# DATA_ROOT = "data/dst"
+# DATASET_NAME = "stl10"
+# DATA_ROOT = "data/stl10"
 # IMAGE_SIZE = 96
+
+DATASET_NAME = "dst"
+DATA_ROOT = "data/dst"
+IMAGE_SIZE = 96
 
 """
 model: resnet50 only

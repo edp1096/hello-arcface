@@ -7,6 +7,7 @@ from torchvision import datasets, models, transforms
 
 import modules.arcface as af
 import modules.ccface as cc
+import modules.xfrm as xfrm
 
 import matplotlib.pyplot as plt
 import random
@@ -15,10 +16,15 @@ import random
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
 
-# data_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-# data_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4452, 0.4457, 0.4464), (0.2592, 0.2596, 0.2600))])
-# data_transform = transforms.Compose([transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)), transforms.ToTensor()])
-data_transform = transforms.ToTensor()
+# data_transform = transforms.ToTensor()
+data_transform = transforms.Compose(
+    [
+        xfrm.CLAHE(clipLimit=2.5),
+        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+        transforms.ToTensor(),
+        # transforms.Normalize((0.4452, 0.4457, 0.4464), (0.2592, 0.2596, 0.2600)),
+    ]
+)
 test_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=data_transform)
 
 num_classes = len(test_set.classes)

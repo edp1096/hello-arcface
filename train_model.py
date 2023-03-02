@@ -9,6 +9,7 @@ import modules.fit as fit
 import modules.valid as valid
 import modules.arcface as af
 import modules.ccface as cc
+import modules.xfrm as xfrm
 
 import cv2
 import numpy as np
@@ -23,10 +24,16 @@ torch.manual_seed(777)
 if device == "cuda":
     torch.cuda.manual_seed_all(777)
 
-# data_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-# data_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4452, 0.4457, 0.4464), (0.2592, 0.2596, 0.2600))])
-# data_transform = transforms.Compose([transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)), transforms.ToTensor()])
-data_transform = transforms.ToTensor()
+
+# data_transform = transforms.ToTensor()
+data_transform = transforms.Compose(
+    [
+        xfrm.CLAHE(clipLimit=2.5),
+        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+        transforms.ToTensor(),
+        # transforms.Normalize((0.4452, 0.4457, 0.4464), (0.2592, 0.2596, 0.2600)),
+    ]
+)
 train_set = datasets.ImageFolder(f"{DATA_ROOT}/train", transform=data_transform)
 valid_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=data_transform)
 train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True)
