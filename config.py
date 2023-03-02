@@ -2,13 +2,13 @@
 # DATA_ROOT = "data/mnist"
 # IMAGE_SIZE = 28
 
-# DATASET_NAME = "stl10"
-# DATA_ROOT = "data/stl10"
-# IMAGE_SIZE = 96
-
-DATASET_NAME = "dst"
-DATA_ROOT = "data/dst"
+DATASET_NAME = "stl10"
+DATA_ROOT = "data/stl10"
 IMAGE_SIZE = 96
+
+# DATASET_NAME = "dst"
+# DATA_ROOT = "data/dst"
+# IMAGE_SIZE = 224
 
 """
 model: resnet50 only
@@ -24,8 +24,8 @@ WEIGHT_FILENAME = f"{MODEL_NAME}_{DATASET_NAME}_{FC_LAYER}.pt"
 SCATTER_FILENAME = f"dist_{DATASET_NAME}_{FC_LAYER}"
 LOSS_FILENAME = f"loss_{DATASET_NAME}_{FC_LAYER}"
 
-EPOCHS = 50
-BATCH_SIZE = 256
+EPOCHS = 20
+BATCH_SIZE = 64
 LEARNING_RATE = 0.03
 
 CHANNEL_IN = 3  # INPUT CHANNEL

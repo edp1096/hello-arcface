@@ -91,12 +91,13 @@ best_epoch = 0
 for epoch in range(EPOCHS):
     print(f"Epoch {epoch+1}    [{len(train_set)}]\n-------------------------------")
 
+
     train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
     valid_acc_top1, valid_acc_top3, valid_loss = valid.run(device, valid_loader, model, criterion)
 
     pad = " "
-    print(f"Train - Acc:      {(100*train_acc):>3.2f}%, {pad:<12} Loss: {train_loss:>10f}")
-    print(f"Valid - Acc: top1 {(100*valid_acc_top1):>3.2f}%, top3 {(100*valid_acc_top3):>3.2f}%, Loss: {valid_loss:>10f}")
+    print(f"Train - Acc:      {(100*train_acc):>3.2f}%, {pad:<12} Loss: {train_loss:>3.5f}")
+    print(f"Valid - Acc: top1 {(100*valid_acc_top1):>3.2f}%, top3 {(100*valid_acc_top3):>3.2f}%, Loss: {valid_loss:>3.5f}")
 
     train_accs.append(train_acc.cpu() * 100)
     valid_accs_top1.append(valid_acc_top1.cpu() * 100)
@@ -108,7 +109,12 @@ for epoch in range(EPOCHS):
     # 모델 저장
     if valid_acc_top1 > best_acc:
         torch.save(model.state_dict(), f"{WEIGHT_FILENAME}")
-        print(f"Saved best state to {WEIGHT_FILENAME}\nValid acc: {best_acc:>2.5f} -> {valid_acc_top1:>2.5f}\n")
+        print(f"Saved best state to {WEIGHT_FILENAME}")
+        torch.save(optimizer.state_dict(), f"{WEIGHT_FILENAME}o")
+        print(f"Saved best state to {WEIGHT_FILENAME}o")
+
+        print(f"Valid acc: {best_acc:>2.5f} -> {valid_acc_top1:>2.5f}\n")
+
         best_epoch = epoch
         best_acc = valid_acc_top1
 
