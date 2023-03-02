@@ -23,7 +23,6 @@ data_transform = transforms.Compose(
         xfrm.CLAHE(clipLimit=2.5),
         transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
         transforms.ToTensor(),
-        # transforms.Normalize((0.4452, 0.4457, 0.4464), (0.2592, 0.2596, 0.2600)),
     ]
 )
 test_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=data_transform)

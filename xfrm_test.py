@@ -25,7 +25,6 @@ xfrm_transform = transforms.Compose(
         xfrm.CLAHE(clipLimit=2.5),
         # transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
         transforms.ToTensor(),
-        # transforms.Normalize((0.4452, 0.4457, 0.4464), (0.2592, 0.2596, 0.2600)),
     ]
 )
 vanilla_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=vanilla_transform)
@@ -34,6 +33,7 @@ xfrmed_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=xfrm_transform
 
 # Show one image in dataset
 random_idx = torch.randint(0, len(vanilla_set), (1,)).item()
+random_idx = 100
 
 tdata_vanilla = vanilla_set[random_idx][0]
 tdata_xfrm = xfrmed_set[random_idx][0]
