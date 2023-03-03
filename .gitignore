@@ -6,3 +6,4 @@ __pycache__
 /base.*
 /base_loss.*
 /base_dist.*
+/dst_class.cnt
