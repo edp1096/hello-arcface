@@ -4,8 +4,7 @@ import torch
 import torch.nn as nn
 from torchvision import datasets, models, transforms
 
-import modules.arcface as af
-import modules.ccface as cc
+import modules.loss as myloss
 
 import os
 import matplotlib.pyplot as plt
@@ -20,19 +19,21 @@ classes = os.listdir(f"{DATA_ROOT}/train")
 class_idx = {classes[i]: i for i in range(len(classes))}
 num_classes = len(classes)
 
+
 match MODEL_NAME:
     case "resnet50":
         model = models.resnet50()
+    case "effnetv2s":
+        model = models.efficientnet_v2_s()
 
 match FC_LAYER:
-    case "default":
-        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), nn.Linear(model.fc.in_features, num_classes))
+    case "myloss":
+        match MODEL_NAME:
+            case "resnet50":
+                model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.fc.in_features, num_classes))
+            case "effnetv2s":
+                model.classifier[1] = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.classifier[1].in_features, num_classes))
 
-    case "arcface":
-        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes))
-
-    case "ccface":
-        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), cc.CurricularFace(model.fc.in_features, num_classes))
 
 model.to(device)
 model.load_state_dict(torch.load(WEIGHT_FILENAME))

@@ -4,17 +4,18 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, models, transforms
+import torch.cuda.amp as amp
 
 import modules.fit as fit
 import modules.valid as valid
-import modules.arcface as af
-import modules.ccface as cc
+import modules.loss as myloss
 import modules.xfrm as xfrm
 
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from torchinfo import summary
+import time
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -24,6 +25,10 @@ torch.manual_seed(777)
 if device == "cuda":
     torch.cuda.manual_seed_all(777)
 
+scaler = None
+if USE_AMP:
+    BATCH_SIZE *= 2
+    scaler = amp.GradScaler()
 
 # data_transform = transforms.ToTensor()
 data_transform = transforms.Compose(
@@ -58,16 +63,16 @@ num_classes = len(train_set.classes)
 match MODEL_NAME:
     case "resnet50":
         model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
+    case "effnetv2s":
+        model = models.efficientnet_v2_s(weights=models.EfficientNet_V2_S_Weights.IMAGENET1K_V1)
 
 match FC_LAYER:
-    case "default":
-        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), nn.Linear(model.fc.in_features, num_classes))
-
-    case "arcface":
-        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), af.ArcFace(model.fc.in_features, num_classes))
-
-    case "ccface":
-        model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), cc.CurricularFace(model.fc.in_features, num_classes))
+    case "myloss":
+        match MODEL_NAME:
+            case "resnet50":
+                model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.fc.in_features, num_classes))
+            case "effnetv2s":
+                model.classifier[1] = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.classifier[1].in_features, num_classes))
 
 model.to(device)
 # model.load_state_dict(torch.load(WEIGHT_BASE_FILENAME))
@@ -80,19 +85,22 @@ print("Batch count : {}".format(total_batch))
 
 criterion = nn.CrossEntropyLoss().to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
-# optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-# optimizer = Lion(model.parameters(), lr=LEARNING_RATE, weight_decay=2e-4)
 
 
 # 학습 시작
+total_start_time = time.time()
 train_accs, valid_accs_top1, valid_accs_top3, train_losses, valid_losses = [], [], [], [], []
 train_acc, valid_acc_top1, valid_acc_top3, best_acc = 0, 0, 0, 0
 best_epoch = 0
 for epoch in range(EPOCHS):
     print(f"Epoch {epoch+1}    [{len(train_set)}]\n-------------------------------")
 
+    epoch_start_time = time.time()
 
-    train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
+    if USE_AMP:
+        train_acc, train_loss = fit.runAMP(device, train_loader, model, criterion, optimizer, scaler)
+    else:
+        train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
     valid_acc_top1, valid_acc_top3, valid_loss = valid.run(device, valid_loader, model, criterion)
 
     pad = " "
@@ -106,12 +114,17 @@ for epoch in range(EPOCHS):
     train_losses.append(train_loss)
     valid_losses.append(valid_loss)
 
+    print(f"Epoch time: {time.time() - epoch_start_time:.2f} seconds\n")
+
     # 모델 저장
     if valid_acc_top1 > best_acc:
         torch.save(model.state_dict(), f"{WEIGHT_FILENAME}")
-        print(f"Saved best state to {WEIGHT_FILENAME}")
+        print(f"Saved best model state to {WEIGHT_FILENAME}")
         torch.save(optimizer.state_dict(), f"{WEIGHT_FILENAME}o")
-        print(f"Saved best state to {WEIGHT_FILENAME}o")
+        print(f"Saved best optimizer state to {WEIGHT_FILENAME}o")
+        if USE_AMP:
+            torch.save(scaler.state_dict(), f"{WEIGHT_FILENAME}a")
+            print(f"Saved best scaler state to {WEIGHT_FILENAME}a")
 
         print(f"Valid acc: {best_acc:>2.5f} -> {valid_acc_top1:>2.5f}\n")
 
@@ -127,6 +140,7 @@ for epoch in range(EPOCHS):
         best_epoch = epoch
         best_acc = valid_acc_top1
 
+print(f"Total time: {time.time() - total_start_time:.2f} seconds")
 print(f"Best epoch: {best_epoch+1}, Best acc: {best_acc.cpu() * 100:>2.5f}%")
 
 
@@ -147,7 +161,7 @@ ax[1].plot(train_losses, label="train")
 ax[1].plot(valid_losses, label="valid")
 ax[1].legend()
 
-plt.savefig(f"{MODEL_NAME}_{LOSS_FILENAME}.png")
+plt.savefig(f"{LOSS_FILENAME}.png")
 plt.show()
 
 print("Training done!")
