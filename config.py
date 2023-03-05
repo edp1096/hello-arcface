@@ -2,17 +2,17 @@
 # DATA_ROOT = "data/mnist"
 # IMAGE_SIZE = 28
 
-# DATASET_NAME = "stl10"
-# DATA_ROOT = "data/stl10"
-# IMAGE_SIZE = 96
+DATASET_NAME = "stl10"
+DATA_ROOT = "data/stl10"
+IMAGE_SIZE = 96
 
 # DATASET_NAME = "vggface-my100"
 # DATA_ROOT = "data/vggface-my100"
 # IMAGE_SIZE = 224
 
-DATASET_NAME = "dst"
-DATA_ROOT = "data/dst"
-IMAGE_SIZE = 224
+# DATASET_NAME = "dst"
+# DATA_ROOT = "data/dst"
+# IMAGE_SIZE = 224
 
 """
 model: resnet50, effnetv2s
@@ -38,9 +38,9 @@ LOSS_FILENAME = f"{COMMON_FILENAME}"
 # LEARNING_RATE = 0.03
 
 # resnet50, 8GB, 96
-# EPOCHS = 20
-# BATCH_SIZE = 192
-# LEARNING_RATE = 0.03
+EPOCHS = 20
+BATCH_SIZE = 192
+LEARNING_RATE = 0.03
 
 # effnetv2s, 8GB, 96
 # EPOCHS = 20
@@ -48,9 +48,9 @@ LOSS_FILENAME = f"{COMMON_FILENAME}"
 # LEARNING_RATE = 0.03
 
 # resnet50, 8GB, 224
-EPOCHS = 20
-BATCH_SIZE = 18
-LEARNING_RATE = 0.03
+# EPOCHS = 20
+# BATCH_SIZE = 18
+# LEARNING_RATE = 0.03
 
 # effnetv2s, 8GB, 224
 # EPOCHS = 20

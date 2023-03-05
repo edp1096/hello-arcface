@@ -101,6 +101,7 @@ for epoch in range(EPOCHS):
         train_acc, train_loss = fit.runAMP(device, train_loader, model, criterion, optimizer, scaler)
     else:
         train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
+
     valid_acc_top1, valid_acc_top3, valid_loss = valid.run(device, valid_loader, model, criterion)
 
     pad = " "
