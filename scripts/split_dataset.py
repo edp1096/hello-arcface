@@ -4,6 +4,8 @@ import glob
 
 SRC_ROOT = "data/src"
 DST_ROOT = "data/dst"
+# SRC_ROOT = "raw100"
+# DST_ROOT = "vggface-my100"
 
 DST_ROOT_TRAIN = f"{DST_ROOT}/train"
 DST_ROOT_VALID = f"{DST_ROOT}/valid"
@@ -12,22 +14,24 @@ DST_ROOT_TEST = f"{DST_ROOT}/test"
 os.makedirs(DST_ROOT, exist_ok=True)
 os.makedirs(DST_ROOT_TRAIN, exist_ok=True)
 os.makedirs(DST_ROOT_VALID, exist_ok=True)
-# os.makedirs(DST_ROOT_TEST, exist_ok=True)
+os.makedirs(DST_ROOT_TEST, exist_ok=True)
 
 extTYPEs = ["*.jpg", "*.png", "*.jpeg", "*.bmp"]
 
-# limit_total = 180
-# limit_train = 150
-# limit_valid = 30
-limit_total = 150
-limit_train = 120
+limit_total = 180
+limit_train = 150
 limit_valid = 30
+
+# limit_total = 150
+# limit_train = 120
+# limit_valid = 30
+
 
 """
 Required images >= "limit_total"
 * train: "limit_train"
 * valid: "limit_valid"
-* test: no idea...
+* test: else of them
 """
 
 LACK_LOG_CREATED = False
@@ -38,6 +42,7 @@ for dir in os.listdir(SRC_ROOT):
     src_root = os.path.join(SRC_ROOT, dir)
     dst_train = os.path.join(DST_ROOT_TRAIN, target_dir_name)
     dst_valid = os.path.join(DST_ROOT_VALID, target_dir_name)
+    dst_test = os.path.join(DST_ROOT_TEST, target_dir_name)
 
     if os.path.isdir(src_root) == False:
         continue
@@ -58,8 +63,9 @@ for dir in os.listdir(SRC_ROOT):
 
     os.makedirs(dst_train, exist_ok=True)
     os.makedirs(dst_valid, exist_ok=True)
+    os.makedirs(dst_test, exist_ok=True)
 
-    i, j = 1, 1
+    i, j, k = 1, 1, 1
     # for file in os.listdir(src_root):
     for file in image_files:
         if i > limit_total:
@@ -72,7 +78,13 @@ for dir in os.listdir(SRC_ROOT):
         target_fname = f"{i}.{fext}"
 
         dst_path = dst_train
-        if i >= limit_train:
+        if i + j + k >= limit_total:
+            break
+        elif j >= limit_valid:
+            dst_path = dst_test
+            target_fname = f"{k}.{fext}"
+            k += 1
+        elif i >= limit_train:
             dst_path = dst_valid
             target_fname = f"{j}.{fext}"
             j += 1

@@ -27,9 +27,13 @@ def scatter(x, labels, root=".", subtitle=None, dataset="MNIST"):
     elif dataset == "CIFAR10" or dataset == "STL10":
         idx2name = ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
     else:
+        dst_path = "data/dst"
+        if dataset == "VGGFACE-MY100":
+            dst_path = "data/vggface-my100"
+
         idx2name = []
-        for file in os.listdir(os.path.join("data/dst", "train")):
-            if os.path.isdir(os.path.join("data/dst", "train", file)):
+        for file in os.listdir(os.path.join(dst_path, "train")):
+            if os.path.isdir(os.path.join(dst_path, "train", file)):
                 idx2name.append(file)
 
         if len(idx2name) == 0:
