@@ -1,8 +1,30 @@
+from config import *
+
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as PathEffects
 import os
+
+
+def plotTrainResults(train_accs, valid_accs, train_losses, valid_losses, best_epoch, best_acc):
+    fig, ax = plt.subplots(1, 2, figsize=(12, 6))
+    fig.suptitle(f"{DATASET_NAME} - {MODEL_NAME}")
+
+    ax[0].set_title("Accuracy")
+    ax[0].plot(train_accs, label="train")
+    ax[0].plot(valid_accs, label="valid")
+    ax[0].plot([best_epoch + 1], [best_acc * 100], marker="o", markersize=5, color="red", label="best")
+    ax[0].set_ylim(0, 100)
+    ax[0].legend()
+
+    ax[1].set_title("Loss")
+    ax[1].plot(train_losses, label="train")
+    ax[1].plot(valid_losses, label="valid")
+    ax[1].legend()
+
+    plt.savefig(f"{LOSS_FILENAME}.png")
+    plt.show()
 
 
 # Define our own plot function

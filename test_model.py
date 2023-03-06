@@ -1,12 +1,11 @@
 from config import *
+from common import getTransformSet
 
 import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader
 from torchvision import datasets, models, transforms
 
+from modules.net import NetHead
 import modules.loss as myloss
-import modules.xfrm as xfrm
 
 import matplotlib.pyplot as plt
 import random
@@ -15,36 +14,16 @@ import random
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
 
-# data_transform = transforms.ToTensor()
-data_transform = transforms.Compose(
-    [
-        xfrm.CLAHE(clipLimit=2.5),
-        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-        transforms.ToTensor(),
-    ]
-)
+data_transform = getTransformSet()
 test_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=data_transform)
 
 num_classes = len(test_set.classes)
 
-match MODEL_NAME:
-    case "resnet50":
-        model = models.resnet50()
-    case "effnetv2s":
-        model = models.efficientnet_v2_s()
-
-match FC_LAYER:
-    case "myloss":
-        match MODEL_NAME:
-            case "resnet50":
-                model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.fc.in_features, num_classes))
-            case "effnetv2s":
-                model.classifier[1] = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.classifier[1].in_features, num_classes))
-
-
+model = NetHead(num_classes)
 model.to(device)
 model.load_state_dict(torch.load(WEIGHT_FILENAME))
 model.eval()
+
 
 r = random.randint(0, len(test_set) - 1)  # 랜덤 숫자
 image, label_idx = test_set[r]  # image, label_idx = test_data[r][0], test_data[r][1]
@@ -59,6 +38,9 @@ class_idx = test_set.class_to_idx
 
 pred_max_idx = pred[0].argmax(0).cpu().numpy()
 pred_max_value = pred[0].max().cpu().numpy()
+
+print(pred_max_idx, pred_max_value)
+
 predicted, actual = classes[pred_max_idx], classes[label_idx]
 probability = (255 - pred_max_value) / 255
 probability_pct = f"{probability * 100:.2f}"

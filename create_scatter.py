@@ -1,4 +1,5 @@
 from config import *
+from common import getTransformSet
 
 import torch
 import torch.nn as nn
@@ -6,9 +7,9 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, models, transforms
 from sklearn.manifold import TSNE
 
+from modules.net import NetHead
 import modules.loss as myloss
 import modules.plot as plotter
-import modules.xfrm as xfrm
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -16,34 +17,13 @@ print("Device:", device)
 
 tsne = TSNE(random_state=0)
 
-# data_transform = transforms.ToTensor()
-data_transform = transforms.Compose(
-    [
-        xfrm.CLAHE(clipLimit=2.5),
-        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-        transforms.ToTensor(),
-    ]
-)
+data_transform = getTransformSet()
 test_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=data_transform)
 test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=True)
 
 num_classes = len(test_set.classes)
 
-match MODEL_NAME:
-    case "resnet50":
-        model = models.resnet50()
-    case "effnetv2s":
-        model = models.efficientnet_v2_s()
-
-match FC_LAYER:
-    case "myloss":
-        match MODEL_NAME:
-            case "resnet50":
-                model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.fc.in_features, num_classes))
-            case "effnetv2s":
-                model.classifier[1] = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.classifier[1].in_features, num_classes))
-
-
+model = NetHead(num_classes)
 model.to(device)
 model.load_state_dict(torch.load(WEIGHT_FILENAME))
 model.eval()

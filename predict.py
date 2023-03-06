@@ -1,9 +1,11 @@
 from config import *
+from common import getTransformSet
 
 import torch
 import torch.nn as nn
 from torchvision import datasets, models, transforms
 
+from modules.net import NetHead
 import modules.loss as myloss
 
 import os
@@ -20,21 +22,7 @@ class_idx = {classes[i]: i for i in range(len(classes))}
 num_classes = len(classes)
 
 
-match MODEL_NAME:
-    case "resnet50":
-        model = models.resnet50()
-    case "effnetv2s":
-        model = models.efficientnet_v2_s()
-
-match FC_LAYER:
-    case "myloss":
-        match MODEL_NAME:
-            case "resnet50":
-                model.fc = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.fc.in_features, num_classes))
-            case "effnetv2s":
-                model.classifier[1] = nn.Sequential(nn.Dropout(p=0.4, inplace=True), myloss.My(model.classifier[1].in_features, num_classes))
-
-
+model = NetHead(num_classes)
 model.to(device)
 model.load_state_dict(torch.load(WEIGHT_FILENAME))
 model.eval()
@@ -42,8 +30,8 @@ model.eval()
 xfrm = transforms.ToTensor()
 
 
-# IMG_FILENAME = "sample_cat1.png"
-IMG_FILENAME = "sample_monkey1.png"
+IMG_FILENAME = "sample_cat1.png"
+# IMG_FILENAME = "sample_monkey1.png"
 
 img = cv2.imread(IMG_FILENAME)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -52,6 +40,7 @@ image = xfrm(img)
 
 with torch.no_grad():
     pred = model(image.float().unsqueeze(dim=0).to(device))
+
 
 pred_max_idx = pred[0].argmax(0).cpu().numpy()
 pred_max_value = pred[0].max().cpu().numpy()
