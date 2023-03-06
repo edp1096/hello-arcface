@@ -5,8 +5,6 @@ import math
 
 SRC_ROOT = "data/src"
 DST_ROOT = "data/dst"
-# SRC_ROOT = "raw100"
-# DST_ROOT = "vggface-my100"
 
 DST_ROOT_TRAIN = f"{DST_ROOT}/train"
 DST_ROOT_VALID = f"{DST_ROOT}/valid"
