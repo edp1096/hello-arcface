@@ -23,7 +23,7 @@ def plotTrainResults(train_accs, valid_accs, train_losses, valid_losses, best_ep
     ax[1].plot(valid_losses, label="valid")
     ax[1].legend()
 
-    plt.savefig(f"{LOSS_FILENAME}.png")
+    plt.savefig(LOSS_RESULT_FILE)
     plt.show()
 
 

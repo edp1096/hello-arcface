@@ -1,20 +1,17 @@
 from config import *
-from common import getTransformSet
+from common import device, data_transform
 
 import torch
 import torch.nn as nn
 from torchvision import datasets, models, transforms
+from torchvision.transforms import ToPILImage
 
 from modules.net import NetHead
-import modules.loss as myloss
+from modules.file import loadWeights
 
 import os
 import matplotlib.pyplot as plt
 import cv2
-
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Device:", device)
 
 
 classes = os.listdir(f"{DATA_ROOT}/train")
@@ -24,10 +21,8 @@ num_classes = len(classes)
 
 model = NetHead(num_classes)
 model.to(device)
-model.load_state_dict(torch.load(WEIGHT_FILENAME))
+model.load_state_dict(loadWeights()["model"])
 model.eval()
-
-xfrm = transforms.ToTensor()
 
 
 IMG_FILENAME = "sample_cat1.png"
@@ -36,7 +31,9 @@ IMG_FILENAME = "sample_cat1.png"
 img = cv2.imread(IMG_FILENAME)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 # img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
-image = xfrm(img)
+
+image = ToPILImage()(img)
+image = data_transform(image)
 
 with torch.no_grad():
     pred = model(image.float().unsqueeze(dim=0).to(device))

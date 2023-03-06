@@ -9,3 +9,4 @@ __pycache__
 /base_dist.*
 /dst_class.cnt
 /data/vggface-my100
+/weights

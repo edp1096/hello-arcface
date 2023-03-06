@@ -1,5 +1,5 @@
 from config import *
-from common import getTransformSet
+from common import device, data_transform
 
 import torch
 import torch.nn as nn
@@ -18,9 +18,6 @@ from modules.plot import plotTrainResults
 import time
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Device:", device)
-
 torch.manual_seed(777)
 if device == "cuda":
     torch.cuda.manual_seed_all(777)
@@ -31,7 +28,6 @@ if USE_AMP:
     scaler = amp.GradScaler()
 
 
-data_transform = getTransformSet()
 train_set = datasets.ImageFolder(f"{DATA_ROOT}/train", transform=data_transform)
 valid_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=data_transform)
 train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True)
@@ -47,8 +43,8 @@ print(model)
 total_batch = len(train_loader)
 print("Batch count : {}".format(total_batch))
 
-criterion = nn.CrossEntropyLoss().to(device)
-# criterion = myloss.FocalLoss().to(device)
+# criterion = nn.CrossEntropyLoss().to(device)
+criterion = myloss.FocalLoss().to(device)
 optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9, weight_decay=5e-4)
 optim_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
 
@@ -62,7 +58,10 @@ for epoch in range(EPOCHS):
     print(f"Epoch {epoch+1}    [{len(train_set)}]\n-------------------------------")
     epoch_start_time = time.time()
 
-    train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
+    if USE_AMP:
+        train_acc, train_loss = fit.runAMP(device, train_loader, model, criterion, optimizer, scaler)
+    else:
+        train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
     valid_acc, valid_loss = valid.run(device, valid_loader, model, criterion)
 
     optim_scheduler.step()

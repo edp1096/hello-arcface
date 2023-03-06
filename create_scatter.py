@@ -1,5 +1,5 @@
 from config import *
-from common import getTransformSet
+from common import device, data_transform
 
 import torch
 import torch.nn as nn
@@ -8,16 +8,12 @@ from torchvision import datasets, models, transforms
 from sklearn.manifold import TSNE
 
 from modules.net import NetHead
-import modules.loss as myloss
+from modules.file import loadWeights
 import modules.plot as plotter
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Device:", device)
-
 tsne = TSNE(random_state=0)
 
-data_transform = getTransformSet()
 test_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=data_transform)
 test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=True)
 
@@ -25,12 +21,12 @@ num_classes = len(test_set.classes)
 
 model = NetHead(num_classes)
 model.to(device)
-model.load_state_dict(torch.load(WEIGHT_FILENAME))
+model.load_state_dict(loadWeights()["model"])
 model.eval()
 
 
 # 분포도
-fname = f"{SCATTER_FILENAME}"
+fname = SCATTER_FILE
 
 total_preds = torch.FloatTensor().to(device)
 total_labels = torch.LongTensor().to(device)
