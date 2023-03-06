@@ -24,7 +24,7 @@ class NetHead(nn.Module):
                 in_features, self.model.classifier[1] = self.model.classifier[1].in_features, nn.Identity()
 
         self.fc = nn.Linear(in_features, num_classes)
-        self.arcface = ArcFace(in_features, num_classes, s=30.0, m=0.5)
+        self.arcface = ArcFace(in_features, num_classes, s=30.0, m_arc=0.5)
 
     def forward(self, x, label=None):
         x = self.model(x)
