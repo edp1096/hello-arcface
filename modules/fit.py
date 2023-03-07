@@ -14,18 +14,14 @@ def run(device, loader, model, loss_fn, optimizer):
         image, label = image.to(device), label.to(device)
 
         with torch.set_grad_enabled(True):
-            # 예측 오류 계산
             logits = model(image)
             loss = loss_fn(logits, label)
             _, pred = torch.max(logits.data, 1)
 
-            # 역전파
-            optimizer.zero_grad()
-            loss.backward()
-
+        optimizer.zero_grad()
+        loss.backward()
         optimizer.step()
 
-        # 정확도 계산
         loss_total += loss.item() * image.size(0)
         corrects += (label == pred).sum()
 
@@ -44,19 +40,17 @@ def runAMP(device, loader, model, loss_fn, optimizer, scaler):
     for batch, (image, label) in enumerate(loader):
         image, label = image.to(device), label.to(device)
 
-        with torch.set_grad_enabled(True) and amp.autocast():
-            # 예측 오류 계산
-            logits = model(image)
-            loss = loss_fn(logits, label)
-            _, pred = torch.max(logits.data, 1)
+        with amp.autocast():
+            with torch.set_grad_enabled(True):
+                logits = model(image)
+                loss = loss_fn(logits, label)
+                _, pred = torch.max(logits.data, 1)
 
-            # 역전파
             optimizer.zero_grad()
             scaler.scale(loss).backward()
             scaler.step(optimizer)
             scaler.update()
 
-        # 정확도 계산
         loss_total += loss.item() * image.size(0)
         corrects += (label == pred).sum()
 
