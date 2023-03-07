@@ -10,8 +10,6 @@ class NeuralNetwork(nn.Module):
     def __init__(self, in_features=28 * 28, out_features=10):
         super().__init__()
 
-        self.num_classes = out_features
-
         self.flatten = nn.Flatten()
         self.layer = nn.Sequential(
             nn.Linear(in_features, 512),
@@ -19,7 +17,7 @@ class NeuralNetwork(nn.Module):
             nn.Linear(512, 512),
             nn.ReLU(),
         )
-        self.fc = nn.Linear(512, self.num_classes)
+        self.fc = nn.Linear(512, out_features)
 
     def forward(self, x):
         x = self.flatten(x)
@@ -31,6 +29,11 @@ class NeuralNetwork(nn.Module):
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
+
+torch.manual_seed(777)
+if device == "cuda":
+    torch.cuda.manual_seed_all(777)
+
 
 tbatch, tchan, twidth, theight = 1, 3, 28, 28
 im_shape = (tbatch, tchan, twidth, theight)
@@ -63,7 +66,7 @@ for i in range(20):
         loss.backward()
         optimizer.step()
 
-    print(f"epoch: {i+1:>3}, loss: {loss.item():>2.3f}")
+    print(f"epoch: {i+1:>3}, loss: {loss.item():>.3f}")
 
 
 model.eval()
@@ -73,4 +76,4 @@ for tdata in inputs:
     pred_probab = nn.Softmax(dim=1)(logit)
     pred = pred_probab.argmax(1)
 
-    print(f"actual: {tdata['label'].item()}, predicted: {pred.item()}")
+    print(f"actual: {tdata['label'].item():>2}, pred: {pred.item():>1}")
