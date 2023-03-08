@@ -33,7 +33,7 @@ class NeuralNetwork(nn.Module):
 
         return x
 
-
+# device = "cpu"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device:", device)
 
@@ -56,7 +56,7 @@ loss_fn = nn.CrossEntropyLoss().to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
 
 inputs = []
-sample_num = 40
+sample_num = 20
 for i in range(sample_num):
     random_input = torch.rand(im_shape, device=device)
     random_label = torch.randint(0, num_classes, (1,), device=device)
