@@ -7,7 +7,7 @@ import torch.nn as nn
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, in_features=28 * 28, out_features=10):
+    def __init__(self, channel=1, in_features=28 * 28, out_features=10):
         super().__init__()
 
         availavle_vram = int(torch.cuda.get_device_properties(0).total_memory * 0.8 * 0.000001)
@@ -18,20 +18,20 @@ class NeuralNetwork(nn.Module):
             mid_features = int(availavle_vram)
 
         self.flatten = nn.Flatten()
-        self.layer = nn.Sequential(
+        self.fc = nn.Sequential(
             nn.Linear(in_features, mid_features),
             nn.ReLU(),
             nn.Linear(mid_features, mid_features),
             nn.ReLU(),
+            nn.Linear(mid_features, out_features),
         )
-        self.fc = nn.Linear(mid_features, out_features)
 
     def forward(self, x):
         x = self.flatten(x)
-        x = self.layer(x)
         x = self.fc(x)
 
         return x
+
 
 # device = "cpu"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -48,7 +48,7 @@ im_shape = (tbatch, tchan, twidth, theight)
 input_features = tchan * twidth * theight
 num_classes = 10
 
-model = NeuralNetwork(in_features=input_features, out_features=num_classes).to(device)
+model = NeuralNetwork(channel=tchan, in_features=input_features, out_features=num_classes).to(device)
 print(model)
 
 
