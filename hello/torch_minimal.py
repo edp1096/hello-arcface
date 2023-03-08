@@ -10,14 +10,16 @@ class NeuralNetwork(nn.Module):
     def __init__(self, in_features=28 * 28, out_features=10):
         super().__init__()
 
+        mid_features = int(in_features * 0.65)
+
         self.flatten = nn.Flatten()
         self.layer = nn.Sequential(
-            nn.Linear(in_features, 512),
+            nn.Linear(in_features, mid_features),
             nn.ReLU(),
-            nn.Linear(512, 512),
+            nn.Linear(mid_features, mid_features),
             nn.ReLU(),
         )
-        self.fc = nn.Linear(512, out_features)
+        self.fc = nn.Linear(mid_features, out_features)
 
     def forward(self, x):
         x = self.flatten(x)
@@ -27,7 +29,8 @@ class NeuralNetwork(nn.Module):
         return x
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = "cpu"
 print("Device:", device)
 
 torch.manual_seed(777)
@@ -35,7 +38,8 @@ if device == "cuda":
     torch.cuda.manual_seed_all(777)
 
 
-tbatch, tchan, twidth, theight = 1, 3, 28, 28
+tbatch, tchan, theight, twidth = 1, 3, 28, 28
+# tbatch, tchan, theight, twidth = 1, 3, 224, 224
 im_shape = (tbatch, tchan, twidth, theight)
 
 input_features = tchan * twidth * theight
@@ -56,8 +60,8 @@ for i in range(10):
     inputs.append({"input": random_input, "label": random_label})
 
 
-model.train()
 for i in range(20):
+    model.train()
     for tdata in inputs:
         logit = model(tdata["input"])
         loss = loss_fn(logit, tdata["label"])
@@ -73,7 +77,17 @@ model.eval()
 for tdata in inputs:
     logit = model(tdata["input"])
 
-    pred_probab = nn.Softmax(dim=1)(logit)
-    pred = pred_probab.argmax(1)
+    # pred_probab = nn.Softmax(dim=1)(logit)
+    # pred = pred_probab.argmax(1)
+
+    pred = logit.argmax(1)
 
     print(f"actual: {tdata['label'].item():>2}, pred: {pred.item():>1}")
+
+
+model.eval()
+one_input = torch.rand(im_shape, device=device)
+logit = model(one_input)
+pred = logit.argmax(1)
+
+print(f"pred: {pred.item():>1}")
