@@ -1,51 +1,44 @@
-"""
-https://www.tensorflow.org/guide/keras/sequential_model
-https://www.tensorflow.org/guide/keras/train_and_evaluate
-https://keras.io/examples/vision/mnist_convnet
-"""
-
 import tensorflow as tf
 from tensorflow import keras
-from keras import layers
 
-import numpy as np
 
+device = "gpu" if tf.test.is_gpu_available() else "cpu"
+
+twidth, theight, tchan = 28, 28, 3
+im_shape = (1, twidth, theight, tchan)
 
 num_classes = 10
-input_shape = (28, 28, 1)
 
-model = keras.Sequential()
-model.add(keras.Input(shape=input_shape))
-model.add(layers.Flatten())
-model.add(layers.Dense(num_classes, activation="relu"))
-model.add(layers.Flatten())
-model.add(layers.Dense(num_classes, activation="softmax"))
+# with tf.device(device):
+model = keras.Sequential(
+    [
+        keras.layers.Flatten(input_shape=im_shape[1:]),
+        keras.layers.Dense(512, activation="relu"),
+        keras.layers.Dense(512, activation="relu"),
+        keras.layers.Dense(num_classes),
+    ]
+)
 
+loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+optimizer = keras.optimizers.SGD(learning_rate=0.05)
+
+model.compile(loss=loss_fn, optimizer=optimizer)
 model.summary()
 
 
-(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
-
-# Scale images to the [0, 1] range
-x_train = x_train.astype("float32") / 255
-x_test = x_test.astype("float32") / 255
-
-# Convert class vectors to binary class matrices
-y_train = keras.utils.to_categorical(y_train, num_classes)
-y_test = keras.utils.to_categorical(y_test, num_classes)
-
-model.compile(
-    loss=keras.losses.categorical_crossentropy,
-    optimizer=keras.optimizers.Adam(),
-    metrics=keras.metrics.Accuracy(),
-)
+sample_num = 20
+inputs = tf.random.uniform((sample_num,) + im_shape[1:], dtype=tf.float32)
+labels = tf.random.uniform((sample_num,), minval=0, maxval=num_classes, dtype=tf.int32)
 
 
-batch_size = input_shape[0] * input_shape[1]
-epochs = 10
+epochs_num = 20
+for i in range(epochs_num):
+    loss = model.train_on_batch(inputs, labels)
+    print(f"epoch: {i+1:>3}, loss: {loss:>8.3f}")
 
-model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1)
 
-score = model.evaluate(x_test, y_test, verbose=0)
-print("Test loss:", score[0])
-print("Test accuracy:", score[1])
+logits = model(inputs)
+preds = tf.argmax(logits, axis=1)
+print("actual:  pred:")
+for actual, pred in zip(labels.numpy(), preds.numpy()):
+    print(f"   {actual:>2}       {pred:>2}")
