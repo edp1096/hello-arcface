@@ -2,28 +2,29 @@ import tensorflow as tf
 from tensorflow import keras
 
 
-device = "gpu" if tf.test.is_gpu_available() else "cpu"
+device = "GPU:0" if tf.test.is_gpu_available() else "CPU"
 
 twidth, theight, tchan = 28, 28, 3
 im_shape = (1, twidth, theight, tchan)
 
 num_classes = 10
 
-# with tf.device(device):
-model = keras.Sequential(
-    [
-        keras.layers.Flatten(input_shape=im_shape[1:]),
-        keras.layers.Dense(512, activation="relu"),
-        keras.layers.Dense(512, activation="relu"),
-        keras.layers.Dense(num_classes),
-    ]
-)
 
-loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-optimizer = keras.optimizers.SGD(learning_rate=0.05)
+with tf.device(device):
+    model = keras.Sequential(
+        [
+            keras.layers.Flatten(input_shape=im_shape[1:]),
+            keras.layers.Dense(512, activation="relu"),
+            keras.layers.Dense(512, activation="relu"),
+            keras.layers.Dense(num_classes),
+        ]
+    )
 
-model.compile(loss=loss_fn, optimizer=optimizer)
-model.summary()
+    loss_fn = keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+    optimizer = keras.optimizers.SGD(learning_rate=0.05)
+
+    model.compile(loss=loss_fn, optimizer=optimizer)
+    model.summary()
 
 
 sample_num = 20
