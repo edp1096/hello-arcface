@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import Parameter
-import torch.optim as optim
 
 import math
 
@@ -76,7 +75,7 @@ class NeuralNetwork(nn.Module):
 
         self.flatten = nn.Flatten()
         self.fc = nn.Linear(in_features, mid_features)
-        self.arcface = ArcFace(mid_features, out_features, s=30.0, m_arc=0.50, m_am=0.0)
+        self.arcface = ArcFace(mid_features, out_features, s=30.0, m_arc=0.25, m_am=0.0)
 
     def forward(self, x, label=None):
         x = self.flatten(x)
@@ -94,9 +93,7 @@ torch.manual_seed(777)
 if device == "cuda":
     torch.cuda.manual_seed_all(777)
 
-
 tbatch, tchan, theight, twidth = 1, 3, 28, 28
-# tbatch, tchan, theight, twidth = 1, 1, 8, 8
 im_shape = (tbatch, tchan, twidth, theight)
 
 input_features = tchan * twidth * theight
@@ -106,8 +103,8 @@ model = NeuralNetwork(channel=tchan, in_features=input_features, out_features=nu
 print(model)
 
 
-loss_fn = nn.CrossEntropyLoss().to(device)
-# loss_fn = FocalLoss().to(device)
+# loss_fn = nn.CrossEntropyLoss().to(device)
+loss_fn = FocalLoss().to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
 
 inputs = []
