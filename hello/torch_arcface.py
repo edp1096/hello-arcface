@@ -108,8 +108,9 @@ loss_fn = FocalLoss().to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
 
 inputs = []
+sample_num = 20
 # sample_num = 40
-sample_num = 180
+# sample_num = 180
 # sample_num = 1400
 for i in range(sample_num):
     random_input = torch.rand(im_shape, device=device)
