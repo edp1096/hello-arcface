@@ -116,7 +116,8 @@ for i in range(sample_num):
     random_input = torch.rand(im_shape, device=device)
     random_label = torch.randint(0, num_classes, (1,), device=device)
 
-    print(f"input: {random_input.shape}, label: {random_label.item()}")
+    # print(f"input: {random_input.shape}, label: {random_label.item()}")
+    print(f"input: {random_input.shape}, label: {random_label}")
 
     inputs.append({"input": random_input, "label": random_label})
 
