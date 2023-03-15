@@ -25,8 +25,9 @@ model.load_state_dict(loadWeights()["model"])
 model.eval()
 
 
-IMG_FILENAME = "sample_cat1.png"
-# IMG_FILENAME = "sample_monkey1.png"
+
+# IMG_FILENAME = f"{DATA_ROOT}/test/whippet/0..jpg"
+IMG_FILENAME = f"{DATA_ROOT}/test/monkey/1.png"
 
 img = cv2.imread(IMG_FILENAME)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -36,7 +37,7 @@ image = ToPILImage()(img)
 image = data_transform(image)
 
 with torch.no_grad():
-    pred = model(image.float().unsqueeze(dim=0).to(device))
+    embed, pred = model(image.float().unsqueeze(dim=0).to(device))
 
 
 pred_max_idx = pred[0].argmax(0).cpu().numpy()

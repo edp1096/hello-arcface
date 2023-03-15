@@ -14,7 +14,7 @@ def run(device, loader, model, loss_fn, optimizer):
         image, label = image.to(device), label.to(device)
 
         with torch.set_grad_enabled(True):
-            logits = model(image)
+            embeds, logits = model(image)
             loss = loss_fn(logits, label)
             _, pred = torch.max(logits.data, 1)
 
@@ -42,7 +42,7 @@ def runAMP(device, loader, model, loss_fn, optimizer, scaler):
 
         with amp.autocast():
             with torch.set_grad_enabled(True):
-                logits = model(image)
+                embeds, logits = model(image)
                 loss = loss_fn(logits, label)
                 _, pred = torch.max(logits.data, 1)
 

@@ -46,7 +46,7 @@ print("Batch count : {}".format(total_batch))
 # criterion = nn.CrossEntropyLoss().to(device)
 criterion = myloss.FocalLoss().to(device)
 optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9, weight_decay=5e-4)
-optim_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
+# optim_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.3)
 
 
 # 학습 시작
@@ -64,7 +64,7 @@ for epoch in range(EPOCHS):
         train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
     valid_acc, valid_loss = valid.run(device, valid_loader, model, criterion)
 
-    optim_scheduler.step()
+    # optim_scheduler.step()
 
     print(f"Train - Acc: {(100*train_acc):>3.2f}%, Loss: {train_loss:>3.5f}")
     print(f"Valid - Acc: {(100*valid_acc):>3.2f}%, Loss: {valid_loss:>3.5f}")

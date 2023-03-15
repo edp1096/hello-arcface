@@ -35,7 +35,7 @@ for batch, (image, label) in enumerate(test_loader):
     image, label = image.to(device), label.to(device)
 
     with torch.no_grad():
-        test_preds = model(image.float())
+        test_embeds, test_preds = model(image.float())
         total_preds = torch.cat((total_preds, test_preds))
         total_labels = torch.cat((total_labels, label))
 

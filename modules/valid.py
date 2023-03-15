@@ -11,7 +11,7 @@ def run(device, dataloader, model, loss_fn):
         image, label = image.to(device), label.to(device)
 
         with torch.no_grad():
-            logits = model(image)
+            embeds, logits = model(image)
             loss = loss_fn(logits, label)
 
             _, pred = torch.max(logits.data, 1)

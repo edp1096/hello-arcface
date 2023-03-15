@@ -27,3 +27,6 @@ python3 predict.py
 
 * Datasets
     * https://pytorch.org/vision/stable/datasets.html
+* Extract features
+    * https://rom1504.medium.com/image-embeddings-ed1b194d113e
+    * https://www.activeloop.ai/resources/generate-image-embeddings-using-a-pre-trained-cnn-and-store-them-in-hub

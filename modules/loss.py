@@ -36,7 +36,8 @@ class ArcFace(nn.Module):
     def forward(self, embbedings, label):
         embbedings = F.normalize(embbedings, dim=1)
         kernel_norm = F.normalize(self.weight, dim=0)
-        cos_theta = torch.mm(embbedings, kernel_norm).clamp(-1, 1)
+        # cos_theta = torch.mm(embbedings, kernel_norm).clamp(-1, 1)
+        cos_theta = torch.mm(embbedings, kernel_norm).clip(-1 + 1e-7, 1 - 1e-7)
         sin_theta = torch.sqrt(1.0 - torch.pow(cos_theta, 2))
         cos_theta_m = cos_theta * self.cos_margin - sin_theta * self.sin_margin
 

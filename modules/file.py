@@ -21,7 +21,7 @@ def loadWeights():
     return state_dicts
 
 
-def saveEpochInfo(epoch, train_acc, valid_acc, train_loss, valid_loss):
+def saveEpochInfo(epoch, train_acc, train_loss, valid_acc, valid_loss):
     with open(WEIGHT_INFO_FILE, "w") as f:
         f.write(f"Epoch: {epoch+1}\n")
         f.write(f"Train acc: {train_acc * 100:>2.5f}%\n")
