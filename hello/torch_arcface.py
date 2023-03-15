@@ -64,7 +64,7 @@ class FocalLoss(nn.Module):
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, channel=1, in_features=28 * 28, out_features=10):
+    def __init__(self, in_features=28 * 28, out_features=10):
         super().__init__()
 
         availavle_vram = int(torch.cuda.get_device_properties(0).total_memory * 0.8 * 0.000001)
@@ -99,7 +99,7 @@ im_shape = (tbatch, tchan, twidth, theight)
 input_features = tchan * twidth * theight
 num_classes = 10
 
-model = NeuralNetwork(channel=tchan, in_features=input_features, out_features=num_classes).to(device)
+model = NeuralNetwork(in_features=input_features, out_features=num_classes).to(device)
 print(model)
 
 
