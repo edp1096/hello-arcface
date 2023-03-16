@@ -41,14 +41,15 @@ model.to(device)
 
 print(model)
 
-# if os.path.isfile(WEIGHT_FILE):
-#     print("Mode: retrain")
-#     model.load_state_dict(torch.load(WEIGHT_FILE)["model"])
-#     train_set.transform = retrain_transform
-#     valid_set.transform = retrain_transform
-# else:
-#     print("Mode: train")
-#     EPOCHS = 10
+if os.path.isfile(WEIGHT_FILE):
+    print("Mode: retrain")
+    model.load_state_dict(torch.load(WEIGHT_FILE)["model"])
+    train_set.transform = retrain_transform
+    valid_set.transform = retrain_transform
+else:
+    print("Mode: train")
+    EPOCHS = 10
+    BATCH_SIZE //= 9
 
 total_batch = len(train_loader)
 print("Batch count : {}".format(total_batch))
