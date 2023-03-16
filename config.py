@@ -4,20 +4,22 @@
 
 DATASET_NAME = "stl10"
 DATA_ROOT = "data/stl10"
-IMAGE_SIZE = 96
+# IMAGE_SIZE = 96
+IMAGE_SIZE = 384
 
 # DATASET_NAME = "dst"
 # DATA_ROOT = "data/dst"
-# IMAGE_SIZE = 224
+# # IMAGE_SIZE = 224
+# IMAGE_SIZE = 384
 
 
-# MODEL_NAME = "resnet50"
-# MODEL_NAME = "mobilenetv3"
+# MODEL_NAME = "resnet18"
 MODEL_NAME = "efficientnetv2_s"
-# MODEL_NAME = "inceptionresnetv1"
 
 # USE_AMP = False
 USE_AMP = True
+
+USE_ARCFACE = False
 
 OUTPUT_SAVE_ROOT = "weights"
 COMMON_FILENAME = f"{OUTPUT_SAVE_ROOT}/{DATASET_NAME}_{MODEL_NAME}"
@@ -27,9 +29,11 @@ SCATTER_FILE = f"{COMMON_FILENAME}_dist"
 LOSS_RESULT_FILE = f"{COMMON_FILENAME}.png"
 
 
-# BATCH_SIZE = 1920  # resnet50, 28
-# BATCH_SIZE = 256  # resnet50, 96
-BATCH_SIZE = 96  # efficientnetv2, 96
-# BATCH_SIZE = 32  # efficientnetv2, 224
+# BATCH_SIZE = 1920  # resnet18, 28
+# BATCH_SIZE = 256  # resnet18, 96
+BATCH_SIZE = 128  # resnet18, 384
+# BATCH_SIZE = 96  # efficientnetv2_s, 96
+# BATCH_SIZE = 32  # efficientnetv2_s, 224
+# BATCH_SIZE = 14  # efficientnetv2_s, 384
 EPOCHS = 40
 LEARNING_RATE = 0.03

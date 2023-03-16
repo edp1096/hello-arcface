@@ -1,5 +1,5 @@
 from config import *
-from common import device, data_transform
+from common import *
 
 import torch
 import torch.nn as nn
@@ -12,9 +12,10 @@ from modules.net import NetHead
 import modules.fit as fit
 import modules.valid as valid
 import modules.loss as myloss
-from modules.file import saveWeights, saveEpochInfo
+from modules.file import saveWeights, saveEpochInfo, loadWeights
 from modules.plot import plotTrainResults
 
+import os
 import time
 
 
@@ -35,18 +36,36 @@ valid_loader = DataLoader(valid_set, batch_size=BATCH_SIZE, shuffle=True)
 
 num_classes = len(train_set.classes)
 
-model = NetHead(num_classes)
+model = NetHead(num_classes, pretrained=True)
 model.to(device)
 
 print(model)
 
+if os.path.isfile(WEIGHT_FILE):
+    print("Mode: retrain")
+    model.load_state_dict(torch.load(WEIGHT_FILE)["model"])
+    train_set.transform = retrain_transform
+    valid_set.transform = retrain_transform
+else:
+    print("Mode: train")
+    EPOCHS = 10
+
 total_batch = len(train_loader)
 print("Batch count : {}".format(total_batch))
 
-# criterion = nn.CrossEntropyLoss().to(device)
-criterion = myloss.FocalLoss().to(device)
+criterion = nn.CrossEntropyLoss().to(device)
+# criterion = myloss.FocalLoss().to(device)
 optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9, weight_decay=5e-4)
+# optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=5e-4)
 # optim_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.3)
+optim_scheduler = optim.lr_scheduler.CyclicLR(
+    optimizer,
+    base_lr=0.0001,
+    max_lr=LEARNING_RATE,
+    step_size_up=total_batch,
+    cycle_momentum=False,
+    mode="triangular2",
+)
 
 
 # 학습 시작
@@ -64,7 +83,7 @@ for epoch in range(EPOCHS):
         train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
     valid_acc, valid_loss = valid.run(device, valid_loader, model, criterion)
 
-    # optim_scheduler.step()
+    optim_scheduler.step()
 
     print(f"Train - Acc: {(100*train_acc):>3.2f}%, Loss: {train_loss:>3.5f}")
     print(f"Valid - Acc: {(100*valid_acc):>3.2f}%, Loss: {valid_loss:>3.5f}")
