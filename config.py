@@ -1,17 +1,13 @@
-# DATASET_NAME = "mnist"
+# DATASET_NAME = "mnist" # size=28
 # DATA_ROOT = "data/mnist"
-# IMAGE_SIZE = 28
 
-DATASET_NAME = "stl10"
+DATASET_NAME = "stl10"  # size=96
 DATA_ROOT = "data/stl10"
-# IMAGE_SIZE = 96
-IMAGE_SIZE = 384
 
-# DATASET_NAME = "dst"
+# DATASET_NAME = "dst" # size=224
 # DATA_ROOT = "data/dst"
-# # IMAGE_SIZE = 224
-# IMAGE_SIZE = 384
 
+IMAGE_SIZE = 384
 
 # MODEL_NAME = "resnet18"
 MODEL_NAME = "efficientnetv2_s"
