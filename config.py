@@ -31,9 +31,9 @@ LOSS_RESULT_FILE = f"{COMMON_FILENAME}.png"
 
 # BATCH_SIZE = 1920  # resnet18, 28
 # BATCH_SIZE = 256  # resnet18, 96
-BATCH_SIZE = 128  # resnet18, 384
+# BATCH_SIZE = 128  # resnet18, 384
 # BATCH_SIZE = 96  # efficientnetv2_s, 96
 # BATCH_SIZE = 32  # efficientnetv2_s, 224
-# BATCH_SIZE = 14  # efficientnetv2_s, 384
+BATCH_SIZE = 14  # efficientnetv2_s, 384
 EPOCHS = 40
 LEARNING_RATE = 0.03

@@ -49,7 +49,6 @@ if os.path.isfile(WEIGHT_FILE):
 else:
     print("Mode: train")
     EPOCHS = 10
-    BATCH_SIZE //= 9
 
 total_batch = len(train_loader)
 print("Batch count : {}".format(total_batch))
