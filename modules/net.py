@@ -23,8 +23,6 @@ class NetHead(nn.Module):
                     weights = models.ResNet18_Weights.IMAGENET1K_V1
                 self.model = models.resnet18(weights=weights)
                 in_features, self.model.fc = self.model.fc.in_features, nn.Identity()
-                # for param in self.model.parameters():
-                #     param.requires_grad = False
                 # self.model.avgpool.register_forward_hook(self.getEmbeddingHook)
             case "efficientnetv2_s":
                 self.model = timm.create_model(
@@ -35,8 +33,6 @@ class NetHead(nn.Module):
                     drop_path_rate=0.2,
                 )
                 in_features, self.model.classifier = self.model.classifier.in_features, nn.Identity()
-                # for param in self.model.parameters():
-                #     param.requires_grad = False
                 # self.model.global_pool.register_forward_hook(self.getEmbeddingHook)
 
         self.fc = nn.Linear(in_features, num_classes)
