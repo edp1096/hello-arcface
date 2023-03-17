@@ -1,11 +1,11 @@
-# DATASET_NAME = "mnist" # size=28
+# DATASET_NAME = "mnist" # original size=28
 # DATA_ROOT = "data/mnist"
 
-DATASET_NAME = "stl10"  # size=96
-DATA_ROOT = "data/stl10"
+# DATASET_NAME = "stl10"  # original size=96
+# DATA_ROOT = "data/stl10"
 
-# DATASET_NAME = "dst" # size=224
-# DATA_ROOT = "data/dst"
+DATASET_NAME = "dst"  # original size=224
+DATA_ROOT = "data/dst"
 
 IMAGE_SIZE = 384
 
@@ -31,6 +31,5 @@ LOSS_RESULT_FILE = f"{COMMON_FILENAME}.png"
 BATCH_SIZE = 14  # efficientnetv2_s, 384
 
 EPOCHS_PRETRAIN = 10
-# EPOCHS = 40
-EPOCHS = 20
+EPOCHS = 40
 LEARNING_RATE = 0.03
