@@ -12,9 +12,7 @@ IMAGE_SIZE = 384
 # MODEL_NAME = "resnet18"
 MODEL_NAME = "efficientnetv2_s"
 
-# USE_AMP = False
 USE_AMP = True
-
 USE_ARCFACE = False
 
 OUTPUT_SAVE_ROOT = "weights"
@@ -31,5 +29,8 @@ LOSS_RESULT_FILE = f"{COMMON_FILENAME}.png"
 # BATCH_SIZE = 96  # efficientnetv2_s, 96
 # BATCH_SIZE = 32  # efficientnetv2_s, 224
 BATCH_SIZE = 14  # efficientnetv2_s, 384
-EPOCHS = 40
+
+EPOCHS_PRETRAIN = 10
+# EPOCHS = 40
+EPOCHS = 20
 LEARNING_RATE = 0.03
