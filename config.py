@@ -4,11 +4,11 @@
 # DATASET_NAME = "stl10"  # original size=96
 # DATA_ROOT = "data/stl10"
 
-# DATASET_NAME = "dst"  # original size=224
-# DATA_ROOT = "data/dst"
+DATASET_NAME = "dst"  # original size=224
+DATA_ROOT = "data/dst"
 
-DATASET_NAME = "facechip"  # original size=384
-DATA_ROOT = "data/facechip"
+# DATASET_NAME = "facechip"  # original size=384
+# DATA_ROOT = "data/facechip"
 
 IMAGE_SIZE = 384
 
