@@ -4,16 +4,23 @@
 # DATASET_NAME = "stl10"  # original size=96
 # DATA_ROOT = "data/stl10"
 
-DATASET_NAME = "dst"  # original size=224
-DATA_ROOT = "data/dst"
+# DATASET_NAME = "dst"  # original size=224
+# DATA_ROOT = "data/dst"
+
+DATASET_NAME = "facechip"  # original size=384
+DATA_ROOT = "data/facechip"
 
 IMAGE_SIZE = 384
 
 # MODEL_NAME = "resnet18"
 MODEL_NAME = "efficientnetv2_s"
 
+DO_VALID = False
+# DO_VALID = True
+
 USE_AMP = True
-USE_ARCFACE = False
+# USE_ARCFACE = False
+USE_ARCFACE = True
 
 OUTPUT_SAVE_ROOT = "weights"
 COMMON_FILENAME = f"{OUTPUT_SAVE_ROOT}/{DATASET_NAME}_{MODEL_NAME}"

@@ -21,9 +21,10 @@ import time
 
 def trainMain():
     train_set = datasets.ImageFolder(f"{DATA_ROOT}/train", transform=image_transform)
-    valid_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=image_transform)
     train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True)
-    valid_loader = DataLoader(valid_set, batch_size=BATCH_SIZE, shuffle=True)
+    if DO_VALID == True:
+        valid_set = datasets.ImageFolder(f"{DATA_ROOT}/valid", transform=image_transform)
+        valid_loader = DataLoader(valid_set, batch_size=BATCH_SIZE, shuffle=True)
 
     num_classes = len(train_set.classes)
 
@@ -65,7 +66,11 @@ def trainMain():
             train_acc, train_loss = fit.runAMP(device, train_loader, model, criterion, optimizer, scaler)
         else:
             train_acc, train_loss = fit.run(device, train_loader, model, criterion, optimizer)
-        valid_acc, valid_loss = valid.run(device, valid_loader, model, criterion)
+
+        if DO_VALID == True:
+            valid_acc, valid_loss = valid.run(device, valid_loader, model, criterion)
+        else:
+            valid_acc, valid_loss = train_acc, train_loss
 
         optim_scheduler.step()
 
